@@ -1,0 +1,24 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'portfolio/css/components/button.css' %}" />
+
+<button 
+    class="btn {% if extra_classes %}{{ extra_classes }}{% endif %}"
+    {% if href %}data-href="{% url href %}"{% endif %}
+    {% if type %}type="{{ type }}"{% else %}type="button"{% endif %}
+>
+    {{ text }}
+</button>
+
+{% if href %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('.btn[data-href]');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                window.location.href = btn.dataset.href;
+            });
+        });
+    });
+</script>
+{% endif %}

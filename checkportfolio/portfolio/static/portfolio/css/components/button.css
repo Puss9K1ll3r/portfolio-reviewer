@@ -1,0 +1,30 @@
+.btn {
+    background-color: #fff;
+    color: #237fca;
+    height: 7vh;
+    min-width: 120px;
+    padding: 0 15px;
+    margin-top: 2vh;
+    border-radius: 20px;
+    border: 2px solid lightskyblue;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+    .btn:hover {
+        border-color: blue;
+        color: blue;
+    }
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.3);
+}

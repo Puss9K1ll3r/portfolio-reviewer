@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block styles %}<link type="text/css" href="{% static 'portfolio/css/main.css' %}" rel="stylesheet" />{% endblock  %}
+
+{% block content %}
+
+<div class="wrapper">
+    <header class="header">
+        <div class="header__content">
+            <img src="#" alt="Логотип института" class="image header__content-image">
+            <h1 class="header__content-h">Отправьте портфолио на проверку</h1>
+        </div>
+    </header>
+    <main class="main">
+        <div class="main-links">
+            {% include 'portfolio/includes/button.html' with text='Отправить портфолио' href='upload' extra_classes='upload-btn' %}
+            {% include 'portfolio/includes/button.html' with text='Преподаватель' href='teacher-login' extra_classes='teacher-btn' %}
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="footer__content">
+            <p class="footer__content-p">Сделано при поддержке</p>
+            <img src="#" alt="Логотип кафедры" class="image footer__content-image">
+        </div>
+    </footer>
+</div>
+
+{% endblock  %}
