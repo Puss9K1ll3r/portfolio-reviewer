@@ -1,0 +1,291 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    background-color: darkblue;
+}
+
+.portfolio-upload-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+
+.form-section {
+    padding: 1.8rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    border-color: #ced4da;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Стили для полей ввода */
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.form-input:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+/* Стили для загрузки файла */
+.file-upload-label {
+    display: block;
+    cursor: pointer;
+}
+
+.file-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.file-upload-area.dragover {
+    border-color: #4a90e2;
+    background-color: rgba(74, 144, 226, 0.05);
+}
+
+.file-upload-icon {
+    margin-bottom: 1rem;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.file-upload-icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+.file-upload-text {
+    font-weight: 500;
+    color: #343a40;
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+}
+
+.file-upload-hint {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.file-upload-input {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.file-selected {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    color: #e74c3c;
+    transition: all 0.3s ease;
+}
+
+/* Кнопка отправки */
+.form-actions {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.9rem 2.2rem;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(74, 144, 226, 0.3);
+}
+
+.submit-button:hover {
+    background: #3a7bc8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.button-icon {
+    margin-left: 0.6rem;
+    display: flex;
+    align-items: center;
+}
+
+.button-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Сообщения об ошибках */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    background-color: rgba(231, 76, 60, 0.05);
+    border-radius: 4px;
+}
+
+/* Результаты валидации */
+.validation-result {
+    margin-top: 2.5rem;
+    padding: 1.8rem;
+    border-radius: 10px;
+    animation: fadeIn 0.5s ease;
+}
+
+.validation-result.success {
+    background: #e8f5e9;
+    border-left: 4px solid #2ecc71;
+}
+
+.validation-result.error {
+    background: #fdecea;
+    border-left: 4px solid #e74c3c;
+}
+
+.result-title {
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.25rem;
+}
+
+.result-icon {
+    font-size: 1.3em;
+    line-height: 1;
+}
+
+.result-message {
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+    color: #495057;
+}
+
+.error-list {
+    margin: 0.8rem 0 0 1.5rem;
+    padding: 0;
+    color: #c0392b;
+}
+
+.error-list li {
+    margin-bottom: 0.6rem;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.error-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.result-actions {
+    margin-top: 1.8rem;
+    text-align: center;
+}
+
+.retry-button {
+    padding: 0.7rem 1.8rem;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.retry-button:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .portfolio-upload-container {
+        padding: 1.5rem;
+    }
+    
+    .form-section {
+        padding: 1.3rem;
+    }
+}

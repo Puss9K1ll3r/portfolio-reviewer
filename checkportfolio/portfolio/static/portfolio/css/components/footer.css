@@ -1,0 +1,32 @@
+.footer {
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    bottom: 0;
+    margin-bottom: 3vh;
+}
+
+.footer__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+.footer__content-p {
+    font-size: 1rem;
+}
+
+.footer__content-image {
+    margin-left: 1vw;
+    width: 13vh;
+}
+
+@media (max-width: 445px) {
+    .footer__content-p {
+        font-size: 0.7rem;
+    }
+    .footer__content-image {
+        width: 10vh;
+    }
+}

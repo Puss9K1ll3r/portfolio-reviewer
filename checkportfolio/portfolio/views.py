@@ -7,7 +7,7 @@ def index(request):
     return render(request, 'portfolio/index.html', {'title': 'Welcome'})
 
 def upload(request):
-    return HttpResponse("Страница для отправки")
+    return render(request, 'portfolio/upload.html', {'title': 'Upload'})
 
 def teacherLogin(request):
     return HttpResponse("Страница для преподавателя")

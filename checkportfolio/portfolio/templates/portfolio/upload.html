@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block styles %}
+<link type="text/css" href="{% static 'portfolio/css/upload.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+
+<div class="wrapper">
+    {% include "portfolio/includes/header.html" %}
+    <div class="portfolio-upload-container">
+        
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h2 class="section-title">Информация о студенте</h2>
+                
+                <div class="form-group">
+                    <label for="id_student_name">Фамилия и инициалы*</label>
+                    <input type="text" 
+                           id="id_student_name" 
+                           name="student_name" 
+                           class="form-input"
+                           placeholder="Иванов И.И."
+                           required>
+                    {% if form.student_name.errors %}
+                        <div class="error-message">{{ form.student_name.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_student_group">Группа*</label>
+                    <input type="text" 
+                           id="id_student_group" 
+                           name="student_group" 
+                           class="form-input"
+                           placeholder="ИТ-21"
+                           required>
+                    {% if form.student_group.errors %}
+                        <div class="error-message">{{ form.student_group.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">Информация о предмете</h2>
+                
+                <div class="form-group">
+                    <label for="id_subject_abbr">Аббревиатура предмета*</label>
+                    <input type="text" 
+                           id="id_subject_abbr" 
+                           name="subject_abbr" 
+                           class="form-input"
+                           placeholder="ПОИТ"
+                           required>
+                    {% if form.subject_abbr.errors %}
+                        <div class="error-message">{{ form.subject_abbr.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_works_count">Количество работ (если требуется)</label>
+                    <input type="number" 
+                           id="id_works_count" 
+                           name="works_count" 
+                           class="form-input"
+                           placeholder="3"
+                           min="1">
+                    {% if form.works_count.errors %}
+                        <div class="error-message">{{ form.works_count.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">Файл портфолио</h2>
+                
+                <div class="form-group">
+                    <label class="file-upload-label">
+                        <span class="file-upload-area">
+                            <span class="file-upload-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </span>
+                            <span class="file-upload-text">Перетащите файл сюда или нажмите для выбора</span>
+                            <span class="file-upload-hint">ZIP или RAR, не более 50MB</span>
+                        </span>
+                        <input type="file" 
+                               id="id_archive_file" 
+                               name="archive_file" 
+                               class="file-upload-input"
+                               accept=".zip,.rar"
+                               required>
+                    </label>
+                    <div class="file-selected" id="file-selected-message">Файл не выбран</div>
+                    {% if form.archive_file.errors %}
+                        <div class="error-message">{{ form.archive_file.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-button">
+                    <span class="button-text">Отправить на проверку</span>
+                    <span class="button-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </form>
+        
+        {% if result %}
+        <div class="validation-result {% if result.success %}success{% else %}error{% endif %}">
+            <h3 class="result-title">
+                {% if result.success %}
+                    <span class="result-icon">✓</span> Проверка пройдена успешно!
+                {% else %}
+                    <span class="result-icon">✗</span> Обнаружены ошибки
+                {% endif %}
+            </h3>
+            
+            {% if result.message %}
+                <p class="result-message">{{ result.message }}</p>
+            {% endif %}
+            
+            {% if result.errors %}
+                <ul class="error-list">
+                    {% for error in result.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            
+            {% if not result.success %}
+            <div class="result-actions">
+                <button type="button" class="retry-button" onclick="window.location.reload();">
+                    Попробовать снова
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('.file-upload-input');
+    const fileSelectedMessage = document.getElementById('file-selected-message');
+    
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            fileSelectedMessage.textContent = `Выбран файл: ${this.files[0].name}`;
+            fileSelectedMessage.style.color = '#2ecc71';
+        } else {
+            fileSelectedMessage.textContent = 'Файл не выбран';
+            fileSelectedMessage.style.color = '#e74c3c';
+        }
+    });
+    
+    // Drag and drop functionality
+    const uploadArea = document.querySelector('.file-upload-area');
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }
+    });
+});
+</script>
+{% endblock %}
