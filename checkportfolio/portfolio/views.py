@@ -10,7 +10,7 @@ def upload(request):
     return render(request, 'portfolio/upload.html', {'title': 'Upload'})
 
 def teacherLogin(request):
-    return HttpResponse("Страница для преподавателя")
+    return render(request, 'portfolio/auth.html', {'title': 'Log In'})
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
