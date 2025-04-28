@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block styles %}
+<link type="text/css" href="{% static 'portfolio/css/t_action.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Личный кабинет преподавателя</h1>
+    
+    {% if teacher_name %}
+        <p class="welcome-message">Добро пожаловать, <strong>{{ teacher_name }}</strong>!</p>
+    {% else %}
+        <p class="warning">Профиль преподавателя не привязан к вашему аккаунту.</p>
+    {% endif %}
+    
+</div>
+{% endblock %}

@@ -4,9 +4,11 @@
     box-sizing: border-box;
 }
 
-.wrapper {
+body {
     background-color: darkblue;
-    height: 100vh;
+}
+
+.wrapper {
     font-family: "Roboto", sans-serif;
 }
 
@@ -85,7 +87,6 @@
     margin-top: 0.5rem;
 }
 
-/* Поля ввода */
 .form-group {
     margin-bottom: 1rem;
 }
@@ -152,7 +153,6 @@
     height: 18px;
 }
 
-/* Дополнительные опции */
 .form-options {
     display: flex;
     justify-content: space-between;
@@ -223,7 +223,6 @@
     text-decoration: underline;
 }
 
-/* Кнопка входа */
 .auth-button {
     display: inline-flex;
     align-items: center;
@@ -262,7 +261,6 @@
     height: 18px;
 }
 
-/* Футер формы */
 .auth-footer {
     margin-top: 1.5rem;
     text-align: center;
@@ -280,7 +278,6 @@
     text-decoration: underline;
 }
 
-/* Анимации */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -292,7 +289,6 @@
     }
 }
 
-/* Адаптивность */
 @media (max-width: 576px) {
     .auth-container {
         padding: 1rem;

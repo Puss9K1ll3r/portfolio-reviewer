@@ -32,12 +32,12 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'portfolio.apps.PortfolioConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'portfolio.apps.PortfolioConfig',
 ]
 
 MIDDLEWARE = [
@@ -101,7 +101,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
+AUTH_USER_MODEL = 'portfolio.TeacherData'
+LOGIN_URL = 'teacher-login'
+LOGIN_REDIRECT_URL = 'teacher-action'
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
