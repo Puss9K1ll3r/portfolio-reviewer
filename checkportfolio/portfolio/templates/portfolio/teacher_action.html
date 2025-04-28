@@ -6,14 +6,123 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Личный кабинет преподавателя</h1>
-    
-    {% if teacher_name %}
-        <p class="welcome-message">Добро пожаловать, <strong>{{ teacher_name }}</strong>!</p>
-    {% else %}
-        <p class="warning">Профиль преподавателя не привязан к вашему аккаунту.</p>
-    {% endif %}
-    
+
+<div class="wrapper">
+    <div class="teacher-action-container">
+        <div class="welcome-section">
+            <h1 class="action-title">Личный кабинет преподавателя</h1>
+            {% if teacher_name %}
+                <p class="welcome-message">Добро пожаловать, <strong>{{ teacher_name }}</strong>!</p>
+            {% endif %}
+        </div>
+
+        <div class="subjects-section">
+            <div class="section-header">
+                <h2 class="section-title">Управление предметами</h2>
+                <button class="add-button" id="addSubjectBtn">
+                    <span>Добавить предмет</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="subject-form-container" id="subjectFormContainer">
+                <form method="post" class="subject-form" id="subjectForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="subject_id" id="subjectId" value="">
+                    
+                    <div class="form-group">
+                        <label for="title">Название предмета</label>
+                        <input type="text" id="title" name="title" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="abbr">Аббревиатура</label>
+                            <input type="text" id="abbr" name="abbr" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="files_count">Количество файлов</label>
+                            <input type="number" id="files_count" name="files_count" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="review_params">Параметры проверки</label>
+                        <textarea id="review_params" name="review_params" class="form-input" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-button">
+                            <span class="button-text">Сохранить</span>
+                            <span class="button-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <button type="button" class="cancel-button" id="cancelFormBtn">Отмена</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Таблица предметов -->
+            <div class="subjects-table-container">
+                <table class="subjects-table">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Аббревиатура</th>
+                            <th>Файлы</th>
+                            <th>Параметры</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subject in subjects %}
+                        <tr>
+                            <td>{{ subject.title }}</td>
+                            <td>{{ subject.abbr }}</td>
+                            <td>{{ subject.files_count }}</td>
+                            <td>{{ subject.review_params|default:"-" }}</td>
+                            <td class="actions-cell">
+                                <button class="edit-btn" data-id="{{ subject.id }}" data-title="{{ subject.title }}" 
+                                    data-abbr="{{ subject.abbr }}" data-files="{{ subject.files_count }}" 
+                                    data-params="{{ subject.review_params }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
+                                <button class="delete-btn" data-id="{{ subject.id }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" y2="17" x2="14"></line>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="no-subjects">Нет добавленных предметов</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'portfolio/js/t_action.js' %}"></script>
 {% endblock %}

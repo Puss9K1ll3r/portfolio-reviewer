@@ -16,6 +16,7 @@ class TeacherData(AbstractUser):
         return self.username
 
 class Teacher(models.Model):
+    user = models.OneToOneField(TeacherData, on_delete=models.CASCADE)
     name = models.TextField()
     
     def __str__(self):
@@ -31,7 +32,7 @@ class Subject(models.Model):
         def choices(cls):
             return [(key.value, key.name) for key in cls]
 
-    subject_id = models.IntegerField()    
+    subject_id = models.IntegerField(default=1)    
     title = models.CharField(max_length=255, blank=False)
     abbr = models.CharField(max_length=255, blank=False)
     files_count = models.IntegerField()
