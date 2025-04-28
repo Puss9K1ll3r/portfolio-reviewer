@@ -4,20 +4,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectFormContainer = document.getElementById('subjectFormContainer');
     const subjectForm = document.getElementById('subjectForm');
     const subjectIdInput = document.getElementById('subjectId');
-    
-    // Показать форму добавления
+
     addSubjectBtn.addEventListener('click', function() {
         subjectForm.reset();
         subjectIdInput.value = '';
         subjectFormContainer.style.display = 'block';
     });
     
-    // Скрыть форму
     cancelFormBtn.addEventListener('click', function() {
         subjectFormContainer.style.display = 'none';
     });
-    
-    // Обработка редактирования
+
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
@@ -40,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Обработка удаления
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
@@ -68,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Обработка отправки формы
     subjectForm.addEventListener('submit', function(e) {
         e.preventDefault();
         

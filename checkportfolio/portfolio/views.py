@@ -17,14 +17,12 @@ def upload(request):
     result = None
     
     if request.method == 'POST':
-        # Получаем данные из формы
         student_name = request.POST.get('student_name', '')
         student_group = request.POST.get('student_group', '')
         subject_abbr = request.POST.get('subject_abbr', '')
         works_count = request.POST.get('works_count', '0')
         archive_file = request.FILES.get('archive_file', None)
-        
-        # Проверяем обязательные поля
+
         if not all([student_name, student_group, subject_abbr, archive_file]):
             result = {
                 'success': False,
@@ -32,7 +30,6 @@ def upload(request):
             }
         else:
             try:
-                # Создаем временный файл для хранения данных
                 temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_uploads')
                 os.makedirs(temp_dir, exist_ok=True)
                 
@@ -43,14 +40,12 @@ def upload(request):
                     f.write(f"Предмет: {subject_abbr}\n")
                     f.write(f"Количество работ: {works_count}\n")
                     f.write(f"Имя файла: {archive_file.name}\n")
-                
-                # Сохраняем загруженный файл
+
                 archive_path = os.path.join(temp_dir, archive_file.name)
                 with open(archive_path, 'wb+') as destination:
                     for chunk in archive_file.chunks():
                         destination.write(chunk)
                 
-                # Запускаем Python-скрипт для обработки данных
                 script_path = os.path.join(settings.BASE_DIR, 'portfolio', 'process_portfolio.py')
                 process = subprocess.Popen(
                     ['python', script_path, temp_file_path, archive_path],
@@ -77,7 +72,6 @@ def upload(request):
                     'errors': [f"Произошла ошибка: {str(e)}"]
                 }
             finally:
-                # Удаляем временные файлы (можно закомментировать для отладки)
                 if os.path.exists(temp_file_path):
                     os.remove(temp_file_path)
                 if os.path.exists(archive_path):
@@ -108,10 +102,8 @@ def teacherLogin(request):
 
 @login_required
 def teacherAction(request):
-    # Получаем все предметы
     subjects = Subject.objects.all().order_by('title')
     
-    # Получаем связанного преподавателя (если есть)
     teacher_name = None
     try:
         teacher = Teacher.objects.get(user=request.user)
