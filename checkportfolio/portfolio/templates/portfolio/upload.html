@@ -48,29 +48,30 @@
                 <h2 class="section-title">Информация о предмете</h2>
                 
                 <div class="form-group">
-                    <label for="id_subject_abbr">Аббревиатура предмета*</label>
-                    <input type="text" 
-                           id="id_subject_abbr" 
-                           name="subject_abbr" 
-                           class="form-input"
-                           placeholder="ПОИТ"
-                           required>
-                    {% if form.subject_abbr.errors %}
-                        <div class="error-message">{{ form.subject_abbr.errors }}</div>
-                    {% endif %}
+                    <label for="id_subject">Предмет*</label>
+                    <select id="id_subject" name="subject" class="form-input" required
+                            onchange="updateSubjectInfo(this)">
+                        <option value="">Выберите предмет</option>
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}"
+                                    data-abbr="{{ subject.abbr }}"
+                                    data-files-count="{{ subject.files_count }}"
+                                    {% if form_data and form_data.subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                                {{ subject.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <input type="hidden" id="id_subject_abbr" name="subject_abbr" value="">
+                <input type="hidden" id="id_works_count" name="works_count" value="">
+                
+                <div class="form-group">
+                    <label>Аббревиатура: <span id="subject-abbr-display">-</span></label>
                 </div>
                 
                 <div class="form-group">
-                    <label for="id_works_count">Количество работ (если требуется)</label>
-                    <input type="number" 
-                           id="id_works_count" 
-                           name="works_count" 
-                           class="form-input"
-                           placeholder="3"
-                           min="1">
-                    {% if form.works_count.errors %}
-                        <div class="error-message">{{ form.works_count.errors }}</div>
-                    {% endif %}
+                    <label>Количество работ: <span id="works-count-display">-</span></label>
                 </div>
             </div>
             
@@ -121,31 +122,23 @@
         <div class="validation-result {% if result.success %}success{% else %}error{% endif %}">
             <h3 class="result-title">
                 {% if result.success %}
-                    <span class="result-icon">✓</span> Проверка пройдена успешно!
+                    <span class="result-icon">✓</span> Успешно!
                 {% else %}
-                    <span class="result-icon">✗</span> Обнаружены ошибки
+                    <span class="result-icon">✗</span> Ошибки проверки
                 {% endif %}
             </h3>
             
-            {% if result.message %}
-                <p class="result-message">{{ result.message }}</p>
-            {% endif %}
-            
-            {% if result.errors %}
-                <ul class="error-list">
-                    {% for error in result.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            
-            {% if not result.success %}
-            <div class="result-actions">
-                <button type="button" class="retry-button" onclick="window.location.reload();">
-                    Попробовать снова
-                </button>
+            <div class="result-message">
+                {% if result.success %}
+                    {{ result.message }}
+                {% else %}
+                    <ul class="error-list">
+                        {% for error in result.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
         {% endif %}
     </div>
@@ -155,6 +148,18 @@
 
 {% block scripts %}
 <script>
+function updateSubjectInfo(select) {
+    const selectedOption = select.options[select.selectedIndex];
+    const abbr = selectedOption.getAttribute('data-abbr');
+    const filesCount = selectedOption.getAttribute('data-files-count');
+
+    document.getElementById('id_subject_abbr').value = abbr || '';
+    document.getElementById('id_works_count').value = filesCount || '';
+
+    document.getElementById('subject-abbr-display').textContent = abbr || '-';
+    document.getElementById('works-count-display').textContent = filesCount || '-';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.querySelector('.file-upload-input');
     const fileSelectedMessage = document.getElementById('file-selected-message');
