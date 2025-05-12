@@ -16,6 +16,26 @@
             {% endif %}
         </div>
 
+        <div class="abbreviation-generator">
+            <h2 class="section-title">Генератор аббревиатуры</h2>
+            <div class="abbreviation-form">
+                <input type="text" id="fullSubjectName" placeholder="Введите полное название предмета" class="form-input">
+                <button id="generateAbbrBtn" class="add-button" type="button">
+                    <span>Сгенерировать аббревиатуру</span>
+                </button>
+                <div class="abbreviation-result">
+                    <label>Аббревиатура:</label>
+                    <input type="text" id="generatedAbbreviation" class="form-input" readonly>
+                    <button id="copyAbbrBtn" class="small-button" type="button" title="Копировать">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="subjects-section">
             <div class="section-header">
                 <h2 class="section-title">Управление предметами</h2>
@@ -117,6 +137,44 @@
                 </table>
             </div>
         </div>
+
+        <div class="history-section">
+            <div class="section-header">
+                <h2 class="section-title">История изменений</h2>
+            </div>
+            
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Предмет</th>
+                            <th>Действие</th>
+                            <th>Преподаватель</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in history %}
+                        <tr>
+                            <td data-label="Дата">{{ record.time_update|date:"d.m.Y H:i" }}</td>
+                            <td data-label="Предмет">{{ record.title }} ({{ record.abbr }})</td>
+                            <td data-label="Действие">
+                                <span class="operation-badge operation-{{ record.operation_type|lower }}">
+                                    {{ record.get_operation_display }}
+                                </span>
+                            </td>
+                            <td data-label="Преподаватель">{{ record.changer.name }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="no-history">Нет записей об изменениях</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 

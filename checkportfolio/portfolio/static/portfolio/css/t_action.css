@@ -264,3 +264,167 @@ textarea.form-input {
         justify-content: center;
     }
 }
+.history-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.history-table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th, 
+.history-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.history-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.history-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.operation-badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.operation-create {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #27ae60;
+}
+
+.operation-update {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: #2980b9;
+}
+
+.operation-delete {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #c0392b;
+}
+
+.no-history {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+    .history-table th, 
+    .history-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .operation-badge {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .history-table {
+        display: block;
+    }
+    
+    .history-table thead {
+        display: none;
+    }
+    
+    .history-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .history-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        border-bottom: 1px solid #f1f1f1;
+        text-align: right;
+    }
+    
+    .history-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #2c3e50;
+        margin-right: 1rem;
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .history-section .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .history-table td {
+        font-size: 0.85rem;
+    }
+    
+    .operation-badge {
+        font-size: 0.75rem;
+    }
+}
+
+.abbreviation-generator {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.abbreviation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.abbreviation-result {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.abbreviation-result label {
+    font-weight: 500;
+    color: #495057;
+    white-space: nowrap;
+}
+
+.small-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: #4a90e2;
+    transition: all 0.2s ease;
+}
+
+.small-button:hover {
+    background-color: rgba(74, 144, 226, 0.1);
+}

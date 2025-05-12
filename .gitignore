@@ -1,6 +1,7 @@
-/media/
+/checkportfolio/media/
 !/media/.gitkeep
 djvenv/pyvenv.cfg
+djvenv/Lib/site-packages/rarfile.py
 djvenv/Lib/site-packages/Django-5.2.dist-info/AUTHORS
 djvenv/Lib/site-packages/Django-5.2.dist-info/entry_points.txt
 djvenv/Lib/site-packages/Django-5.2.dist-info/INSTALLER

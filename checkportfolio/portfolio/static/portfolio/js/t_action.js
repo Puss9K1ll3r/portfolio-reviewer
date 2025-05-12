@@ -5,12 +5,69 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectForm = document.getElementById('subjectForm');
     const subjectIdInput = document.getElementById('subjectId');
 
+    const generateAbbrBtn = document.getElementById('generateAbbrBtn');
+    if (generateAbbrBtn) {
+        generateAbbrBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const fullNameInput = document.getElementById('fullSubjectName');
+            const abbreviationOutput = document.getElementById('generatedAbbreviation');
+            
+            if (!fullNameInput || !abbreviationOutput) {
+                console.error('Не найдены необходимые элементы на странице');
+                return;
+            }
+            
+            const fullName = fullNameInput.value.trim();
+            if (!fullName) {
+                showNotification('Введите название предмета', 'warning');
+                return;
+            }
+            
+            const abbreviation = generateAbbreviation(fullName);
+            abbreviationOutput.value = abbreviation;
+
+            const abbrField = document.getElementById('abbr');
+            if (abbrField && document.getElementById('subjectFormContainer').style.display === 'block') {
+                abbrField.value = abbreviation;
+                showNotification('Аббревиатура сгенерирована и добавлена в форму', 'success');
+            }
+        });
+    }
+
+    function generateAbbreviation(fullName) {
+        if (!fullName) return '';
+        
+        const stopWords = ['и', 'на', 'в', 'с', 'по', 'для', 'о', 'у', 'за', 'над', 'под'];
+        const words = fullName.split(' ');
+        let abbreviation = '';
+        
+        for (let word of words) {
+            word = word.trim();
+            if (!word) continue;
+
+            if (word.toLowerCase() === 'и') {
+                abbreviation += 'и';
+                continue;
+            }
+
+            if (stopWords.includes(word.toLowerCase())) {
+                continue;
+            }
+
+            abbreviation += word[0].toUpperCase();
+        }
+        
+        return abbreviation;
+    }
+
     addSubjectBtn.addEventListener('click', function() {
         subjectForm.reset();
         subjectIdInput.value = '';
         subjectFormContainer.style.display = 'block';
+        document.getElementById('title').focus();
     });
-    
+
     cancelFormBtn.addEventListener('click', function() {
         subjectFormContainer.style.display = 'none';
     });
@@ -44,21 +101,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetch(`/api/delete-subject/${id}/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                        'Content-Type': 'application/json'
+                        'X-CSRFToken': getCSRFToken(),
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
                 })
-                .then(response => response.json())
+                .then(handleResponse)
                 .then(data => {
                     if (data.success) {
-                        location.reload();
+                        showNotification('Предмет успешно удален', 'success');
+                        setTimeout(() => location.reload(), 1000);
                     } else {
-                        alert('Ошибка при удалении: ' + data.error);
+                        showNotification('Ошибка при удалении: ' + (data.error || 'Неизвестная ошибка'), 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Произошла ошибка при удалении');
+                    showNotification('Произошла ошибка при удалении', 'error');
                 });
             }
         });
@@ -67,27 +125,82 @@ document.addEventListener('DOMContentLoaded', function() {
     subjectForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const formData = new FormData(this);
-        const url = subjectIdInput.value ? `/api/update-subject/${subjectIdInput.value}/` : '/api/add-subject/';
+        const formData = new URLSearchParams();
+        for (const pair of new FormData(subjectForm)) {
+            formData.append(pair[0], pair[1]);
+        }
+        
+        const url = subjectIdInput.value 
+            ? `/api/update-subject/${subjectIdInput.value}/` 
+            : '/api/add-subject/';
+        
+        const method = subjectIdInput.value ? 'UPDATE' : 'CREATE';
         
         fetch(url, {
             method: 'POST',
             body: formData,
             headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         })
-        .then(response => response.json())
+        .then(handleResponse)
         .then(data => {
             if (data.success) {
-                location.reload();
+                showNotification(
+                    subjectIdInput.value 
+                        ? 'Предмет успешно обновлен' 
+                        : 'Предмет успешно добавлен', 
+                    'success'
+                );
+                setTimeout(() => location.reload(), 1000);
             } else {
-                alert('Ошибка: ' + (data.error || 'Неизвестная ошибка'));
+                showNotification('Ошибка: ' + (data.error || 'Неизвестная ошибка'), 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Произошла ошибка при сохранении');
+            showNotification('Произошла ошибка при сохранении', 'error');
         });
     });
+
+    function getCSRFToken() {
+        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        return csrfInput ? csrfInput.value : '';
+    }
+
+    function handleResponse(response) {
+        if (!response.ok) {
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch {
+                    throw new Error(text || 'Server error');
+                }
+            });
+        }
+        return response.json();
+    }
+
+    function showNotification(message, type = 'info') {
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
+
+    const copyAbbrBtn = document.getElementById('copyAbbrBtn');
+    if (copyAbbrBtn) {
+        copyAbbrBtn.addEventListener('click', function() {
+            const abbrField = document.getElementById('generatedAbbreviation');
+            if (!abbrField || !abbrField.value) {
+                showNotification('Нет аббревиатуры для копирования', 'warning');
+                return;
+            }
+            
+            navigator.clipboard.writeText(abbrField.value)
+                .then(() => showNotification('Аббревиатура скопирована', 'success'))
+                .catch(err => {
+                    console.error('Ошибка копирования: ', err);
+                    showNotification('Не удалось скопировать аббревиатуру', 'error');
+                });
+        });
+    }
 });

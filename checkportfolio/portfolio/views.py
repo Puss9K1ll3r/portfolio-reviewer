@@ -1,11 +1,12 @@
 import re
 import zipfile
+import rarfile
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .forms import LoginForm
-from .models import Subject, Teacher
+from .models import Subject, SubjectHistory, Teacher
 from django.views.decorators.http import require_POST
 from django.core.files.storage import default_storage
 import os
@@ -56,7 +57,7 @@ def validate_filename(filename, group, student_name, subject_abbr):
     
     return True
 
-def validate_portfolio_structure(zip_path, group, student_name, subject_abbr, expected_count):
+def validate_portfolio_structure(archive_path, group, student_name, subject_abbr, expected_count):
     """Проверяет структуру портфолио с учетом различных кодировок"""
     errors = []
     found_files = []
@@ -66,7 +67,16 @@ def validate_portfolio_structure(zip_path, group, student_name, subject_abbr, ex
         return False, errors
     
     try:
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        # Определяем тип архива по расширению
+        if archive_path.lower().endswith('.zip'):
+            archive = zipfile.ZipFile(archive_path, 'r')
+        elif archive_path.lower().endswith('.rar'):
+            archive = rarfile.RarFile(archive_path, 'r')
+        else:
+            errors.append("Неподдерживаемый формат архива. Поддерживаются только ZIP и RAR.")
+            return False, errors
+        
+        with archive:
             decoded_group = decode_archive_name(group)
             decoded_name = decode_archive_name(student_name)
             decoded_subject = decode_archive_name(subject_abbr)
@@ -81,11 +91,11 @@ def validate_portfolio_structure(zip_path, group, student_name, subject_abbr, ex
             # Проверяем наличие всех обязательных папок
             found_required = [False] * len(required_folders)
             
-            for zip_name in zip_ref.namelist():
-                decoded_zip_name = decode_archive_name(zip_name)
+            for archive_name in archive.namelist():
+                decoded_archive_name = decode_archive_name(archive_name)
                 
                 for i, folder in enumerate(required_folders):
-                    if (zip_name.startswith(folder)) or (decoded_zip_name.startswith(decode_archive_name(folder))):
+                    if (archive_name.startswith(folder)) or (decoded_archive_name.startswith(decode_archive_name(folder))):
                         found_required[i] = True
             
             for i, folder in enumerate(required_folders):
@@ -97,12 +107,12 @@ def validate_portfolio_structure(zip_path, group, student_name, subject_abbr, ex
             target_folder = f"{group}/{student_name}/{subject_abbr}/"
             decoded_target_folder = f"{decoded_group}/{decoded_name}/{decoded_subject}/"
             
-            for zip_name in zip_ref.namelist():
-                decoded_zip_name = decode_archive_name(zip_name)
+            for archive_name in archive.namelist():
+                decoded_archive_name = decode_archive_name(archive_name)
                 
-                if ((zip_name.startswith(target_folder)) or 
-                    decoded_zip_name.startswith(decoded_target_folder)) and not zip_name.endswith('/'):
-                    target_files.append(zip_name)
+                if ((archive_name.startswith(target_folder)) or 
+                    decoded_archive_name.startswith(decoded_target_folder)) and not archive_name.endswith('/'):
+                    target_files.append(archive_name)
             
             # Проверка количества файлов
             if len(target_files) != expected_count:
@@ -133,20 +143,32 @@ def validate_portfolio_structure(zip_path, group, student_name, subject_abbr, ex
     return len(errors) == 0, errors
 
 def save_portfolio(student_name, group, subject, archive_file):
-    """Сохраняет портфолио с нормализованными именами"""
+    """Сохраняет портфолио с нормализованными именами, перезаписывая существующие"""
     # Нормализуем имена для сохранения
     normalized_name = re.sub(r'[^\w\-\.]', '_', student_name)
     normalized_group = re.sub(r'[^\w\-\.]', '_', group)
     normalized_subject = re.sub(r'[^\w\-\.]', '_', subject)
     
-    save_path = os.path.join(
+    # Формируем путь для сохранения
+    save_dir = os.path.join(
         'portfolios',
         normalized_group,
         normalized_name,
-        # normalized_subject,
-        archive_file.name
+        normalized_subject
     )
     
+    # Полный путь к файлу
+    save_path = os.path.join(save_dir, archive_file.name)
+    
+    # Удаляем существующий файл и директорию, если они есть
+    if default_storage.exists(save_path):
+        default_storage.delete(save_path)
+    
+    # Создаем директорию, если ее нет
+    if not default_storage.exists(save_dir):
+        os.makedirs(default_storage.path(save_dir), exist_ok=True)
+    
+    # Сохраняем файл
     return default_storage.save(save_path, archive_file)
 
 def upload(request):
@@ -166,6 +188,10 @@ def upload(request):
             # Базовые проверки
             if not all([student_name, student_group, subject_id, subject_abbr, works_count, archive_file]):
                 raise ValueError('Пожалуйста, заполните все обязательные поля.')
+            
+            # Проверяем расширение файла
+            if not (archive_file.name.lower().endswith('.zip') or archive_file.name.lower().endswith('.rar')):
+                raise ValueError('Поддерживаются только архивы в формате ZIP или RAR')
             
             # Проверяем соответствие предмета в БД
             subject = Subject.objects.get(id=subject_id)
@@ -244,6 +270,7 @@ def teacherLogin(request):
 @login_required
 def teacherAction(request):
     subjects = Subject.objects.all().order_by('title')
+    history = SubjectHistory.objects.all().order_by('-time_update')[:20]
     
     teacher_name = None
     try:
@@ -255,7 +282,8 @@ def teacherAction(request):
     return render(request, 'portfolio/teacher_action.html', {
         'title': 'Личный кабинет',
         'teacher_name': teacher_name,
-        'subjects': subjects
+        'subjects': subjects,
+        'history': history
     })
 
 @login_required
