@@ -1,0 +1,15 @@
+*.sqlite3
+*.pyc
+*.pyo
+*.mo
+*.db
+*.css.map
+*.egg-info
+*.log
+static
+.env
+.git
+.gitignore
+.DS_Store
+/media/
+/temp_uploads/
